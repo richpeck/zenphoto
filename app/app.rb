@@ -150,8 +150,8 @@ class App < Sinatra::Base
   # => Shows albums & gives options
   get '/' do
 
-    @album = Album.first
-
+    # => Albums
+    @albums = Album.all
 
   end ## get
 
