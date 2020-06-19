@@ -25,9 +25,10 @@ ruby [RUBY_VERSION, '2.7.1'].max
 
 # => Sinatra
 # => Not big enough for Rails
-gem 'sinatra', '~> 2.0', '>= 2.0.7',                                               require: 'sinatra/base'           # => Not needed but allows us to call /namespace
-gem 'sinatra-activerecord', '~> 2.0', '>= 2.0.14',                                 require: 'sinatra/activerecord'   # => Integrates ActiveRecord into Sinatra apps (I changed for AR6+)
+gem 'sinatra', '~> 2.0', '>= 2.0.8.1',                                             require: 'sinatra/base'           # => Not needed but allows us to call /namespace
+gem 'sinatra-activerecord', '~> 2.0', '>= 2.0.18',                                 require: 'sinatra/activerecord'   # => Integrates ActiveRecord into Sinatra apps (I changed for AR6+)
 gem 'sinatra-asset-pipeline', '~> 2.2', github: 'richpeck/sinatra-asset-pipeline', require: 'sinatra/asset_pipeline' # => Asset Pipeline (for CSS/JS) (I changed lib/asset-pipeline/task.rb#14 to use ::Sinatra:Manifest)
+gem 'sinatra-contrib', '~> 2.0', '>= 2.0.8.1',                                     require: 'sinatra/contrib'        # => Allows us to add "contrib" library to Sinatra app (respond_with) -> http://sinatrarb.com/contrib/
 
 # => Database
 # => Allows us to determine exactly which db we're using
@@ -69,7 +70,7 @@ gem 'sass', '~> 3.7', '>= 3.7.4' # =>  SASS - converts SASS into CSS (required f
 # => Extra
 # => Added to help us manage data structures in app
 gem 'require_all', '~> 3.0'                   # => Require an entire directory and include in an app
-gem 'padrino-helpers', '~> 0.14.4'            # => Sinatra framework which adds a number of support classes -- we needed it for "number_to_currency" (https://github.com/padrino/padrino-framework/blob/02feacb6afa9bce20c1fb360df4dfd4057899cfc/padrino-helpers/lib/padrino-helpers/number_helpers.rb)
+gem 'padrino-helpers', '~> 0.15.0'            # => Sinatra framework which adds a number of support classes -- we needed it for "number_to_currency" (https://github.com/padrino/padrino-framework/blob/02feacb6afa9bce20c1fb360df4dfd4057899cfc/padrino-helpers/lib/padrino-helpers/number_helpers.rb)
 
 ###########################################
 ###########################################
@@ -81,7 +82,7 @@ gem 'padrino-helpers', '~> 0.14.4'            # => Sinatra framework which adds 
 # => General
 gem 'haml', '~> 5.1', '>= 5.1.2'      # => HAML
 gem 'titleize', '~> 1.4', '>= 1.4.1'  # => Titleize (for order line items)
-gem 'humanize', '~> 2.1', '>= 2.1.1'  # => Humanize (allows us to translate numbers to words)
+gem 'humanize', '~> 2.4', '>= 2.4.2'  # => Humanize (allows us to translate numbers to words)
 
 ###########################################
 ###########################################

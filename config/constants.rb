@@ -15,18 +15,18 @@
 ENVIRONMENT = ENV.fetch('RACK_ENV', 'development')
 
 ## DB ##
-MYSQL_HOST         = ENV.fetch('MYSQL_HOST')
-MYSQL_USER         = ENV.fetch('MYSQL_USER')
-MYSQL_PASS         = ENV.fetch('MYSQL_PASS')
-MYSQL_PORT         = ENV.fetch('MYSQL_PORT')
-MYSQL_DB           = ENV.fetch('MYSQL_DB')
-MYSQL_TABLE_PREFIX = ENV.fetch('MYSQL_TABLE_PREFIX')
+MYSQL_HOST         = ENV.fetch('MYSQL_HOST', '')
+MYSQL_USER         = ENV.fetch('MYSQL_USER', '')
+MYSQL_PASS         = ENV.fetch('MYSQL_PASS', '')
+MYSQL_PORT         = ENV.fetch('MYSQL_PORT', '')
+MYSQL_DB           = ENV.fetch('MYSQL_DB',   '')
+MYSQL_TABLE_PREFIX = ENV.fetch('MYSQL_TABLE_PREFIX', '')
 
 ## Auth ##
 ## Used to provide HTTP basic auth ##
 AUTH = {
-    user: ENV.fetch('AUTH_USER'),
-    pass: ENV.fetch('AUTH_PASS')
+    user: ENV.fetch('AUTH_USER', ''),
+    pass: ENV.fetch('AUTH_PASS', '')
 }
 
 ## Paths ##

@@ -66,9 +66,9 @@ class App < Sinatra::Base
   ##########################################################
   ##########################################################
 
-    # => Register
-    # => This allows us to call the various extensions for the system
-    register Padrino::Helpers # => number_to_currency (https://github.com/padrino/padrino-framework/blob/master/padrino-helpers/lib/padrino-helpers.rb#L22)
+    # => Helpers
+    # => Allows us to manage the system at its core
+    helpers Sinatra::RequiredParams # => Required Parameters (ensures we have certain params for different routes)
 
     # => Rack (Flash/Sessions etc)
     # => Allows us to use the "flash" object (rack-flash3)
@@ -123,12 +123,29 @@ class App < Sinatra::Base
     set :assets_public_path, File.join(public_folder, assets_prefix.strip) # => Needed to tell Sprockets where to put assets
     set :assets_css_compressor, :sass
     set :assets_js_compressor,  :uglifier
-    set :assets_precompile, %w[javascripts/app.js stylesheets/app.sass *.png *.jpg *.gif *.svg] # *.png *.jpg *.svg *.eot *.ttf *.woff *.woff2
-    set :precompiled_environments, %i(staging production) # => Only precompile in staging & production
+    set :assets_precompile, [/app.(sass|js)$/, /\w+\.(?!png|svg|jpgZgif).+/] # *.png *.jpg *.svg *.eot *.ttf *.woff *.woff2
 
     # => Register
-    # => Needs to be below definitions
+    # => Needs to be below definitions (for asset management)
+    register Padrino::Helpers # => number_to_currency, form helpers etc (https://github.com/padrino/padrino-framework/blob/master/padrino-helpers/lib/padrino-helpers.rb#L22)
     register Sinatra::AssetPipeline
+
+    ##########################################################
+    ##########################################################
+
+      # => Sprockets
+      # => This is for the layout (calling sprockets helpers etc)
+      # => https://github.com/petebrowne/sprockets-helpers#setup
+      configure do
+
+        # => Paths
+        # => Used to add assets to asset pipeline
+        %w(stylesheets javascripts images).each do |folder|
+          sprockets.append_path File.join(root, 'assets', folder)
+          sprockets.append_path File.join(root, '..', 'vendor', 'assets', folder)
+        end #paths
+
+      end #configure
 
     ##########################################################
     ##########################################################
@@ -165,6 +182,25 @@ class App < Sinatra::Base
     haml :index
 
   end ## get
+
+  ##############################################################
+  ##############################################################
+
+  # => XML
+  # => Creates XML (Wordpress WXR) document from selected album(s)
+  post '/' do
+
+    # => Required Params
+    # => http://sinatrarb.com/contrib/required_params
+    required_params :album
+
+    # => Album
+    @album = Album.find params[:albums].last
+
+    # => Response
+    send_data @xml.to_xml, filename: "#{album.title}.xml", disposition: 'attachment'
+
+  end ## post
 
   ##############################################################
   ##############################################################

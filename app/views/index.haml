@@ -3,4 +3,6 @@
 = form_tag "/" do
   - @albums.order(id: :asc).each do |album|
     = label_tag album.id, style: "display:block;" do
+      = check_box_tag :albums, value: album.id, id: album.id
       = album.title
+  = submit_tag

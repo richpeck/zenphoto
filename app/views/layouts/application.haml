@@ -7,7 +7,7 @@
     %meta{content: "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}
 
     - # Assets
-    != stylesheet_tag('app')
-    != javascript_tag('app')
+    = stylesheet_tag('app')
+    = javascript_tag('app')
 
   %body= yield
