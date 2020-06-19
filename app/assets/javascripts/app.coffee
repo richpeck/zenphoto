@@ -12,23 +12,6 @@
 ##########################################################
 ##########################################################
 
-## Libs ##
-#= require jquery
-#= require parsleyjs
-#= require bootstrap
-#= require data-confirm-modal
 
-##########################################################
-##########################################################
-
-## Flash ##
-## Allows us to close the flash alerts on command ##
-$(document).on "click", "flash > div", (e) ->
-
-  ## Fade Out ##
-  ## After this, remove from the DOM ##
-  $(this).animate { height: 0, opacity: 0 }, 50, ->
-    $(this).remove()
-    
 ##########################################################
 ##########################################################

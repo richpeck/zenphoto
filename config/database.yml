@@ -1,14 +1,28 @@
 
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-  pool: 5
+  adapter: 'mysql2'
+  host:     <%= ENV['MYSQL_HOST'] %>
+  username: <%= ENV['MYSQL_USER'] %>
+  password: <%= ENV['MYSQL_PASS'] %>
+  database: <%= ENV['MYSQL_DB'] %>
+  port:     <%= ENV['MYSQL_PORT'] %>
+
 
 staging:
-  url: <%= ENV['DATABASE_URL'] %>
+  adapter: 'mysql2'
+  host:     <%= ENV['MYSQL_HOST'] %>
+  username: <%= ENV['MYSQL_USER'] %>
+  password: <%= ENV['MYSQL_PASS'] %>
+  database: <%= ENV['MYSQL_DB'] %>
+  port:     <%= ENV['MYSQL_PORT'] %>
 
 production:
-  url: <%= ENV['DATABASE_URL'] %>
+  adapter: 'mysql2'
+  host:     <%= ENV['MYSQL_HOST'] %>
+  username: <%= ENV['MYSQL_USER'] %>
+  password: <%= ENV['MYSQL_PASS'] %>
+  database: <%= ENV['MYSQL_DB'] %>
+  port:     <%= ENV['MYSQL_PORT'] %>
 
 test:
   adapter: sqlite3

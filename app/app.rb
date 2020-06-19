@@ -38,7 +38,7 @@ Bundler.require :default, ENVIRONMENT if defined?(Bundler) # => ENVIRONMENT only
 
 # => Models
 # => This allows us to load all the models (which are not loaded by default)
-require_all 'app', 'lib'
+require_all 'app'
 
 ##########################################################
 ##########################################################
@@ -60,21 +60,12 @@ class App < Sinatra::Base
 
     # => Register
     # => This allows us to call the various extensions for the system
-    register Sinatra::Cors                # => Protects from unauthorized domain activity
-    register Padrino::Helpers             # => number_to_currency (https://github.com/padrino/padrino-framework/blob/master/padrino-helpers/lib/padrino-helpers.rb#L22)
-    register Sinatra::RespondWith         # => http://sinatrarb.com/contrib/respond_with
-    register Sinatra::MultiRoute          # => Multi Route (allows for route :put, :delete)
-    register Sinatra::Namespace           # => Namespace (http://sinatrarb.com/contrib/namespace.html)
-    register Sinatra::I18nSupport         # => Locales (https://www.rubydoc.info/gems/sinatra-support/1.2.2/Sinatra/I18nSupport) -- dependent on sinatra-support gem (!)
-    register Sinatra::Initializers        # => Initializers (used to give "meta" model support)
+    register Padrino::Helpers # => number_to_currency (https://github.com/padrino/padrino-framework/blob/master/padrino-helpers/lib/padrino-helpers.rb#L22)
 
     # => Rack (Flash/Sessions etc)
     # => Allows us to use the "flash" object (rack-flash3)
     # => Required to get redirect_with_flash working
     use Rack::Deflater # => Compresses responses generated at server level
-    use Rack::Session::Cookie, secret: SECRET # => could use enable :sessions instead (http://sinatrarb.com/faq.html#sessions)
-    use Rack::Flash, accessorize: [:notice, :error], sweep: true
-    use Rack::MethodOverride # => used for DELETE requests (logout etc) - https://stackoverflow.com/a/5169913 // http://sinatrarb.com/configuration.html#method_override---enabledisable-the-post-_method-hack
 
     # => HTMLCompressor
     # => Used to minify HTML output (removes bloat and other nonsense)
@@ -98,24 +89,6 @@ class App < Sinatra::Base
       simple_boolean_attributes: true,
       simple_doctype: false
 
-    # => Helpers
-    # => Allows us to manage the system at its core
-    helpers Sinatra::RequiredParams     # => Required Parameters (ensures we have certain params for different routes)
-    helpers Sinatra::RedirectWithFlash  # => Used to provide "flash" functionality with redirect helper
-
-    # => Includes
-    # => Functionality provided by various systems (some my own)
-    include Auth # => app/auth.rb (used for Warden)
-
-  ##########################################################
-  ##########################################################
-
-    # => Development
-    # => Ensures we're only loading in development environment
-    configure :development do
-      register Sinatra::Reloader  # => http://sinatrarb.com/contrib/reloader
-    end
-
   ##########################################################
   ##########################################################
 
@@ -124,23 +97,6 @@ class App < Sinatra::Base
     set :haml, { layout: :'layouts/application' } # https://stackoverflow.com/a/18303130/1143732
     set :views, Proc.new { File.join(root, "views") } # required to get views working (defaulted to ./views)
     set :public_folder, File.join(root, "..", "public") # Root dir fucks up (public_folder defaults to root) http://sinatrarb.com/configuration.html#root---the-applications-root-directory
-
-    # => Logger
-    # => Allows us to store information from the application
-    # => http://sinatrarb.com/contrib/custom_logger
-    configure :development, :production do
-      FileUtils.touch "#{root}/../log/#{environment}.log"
-      logger = Logger.new File.open("#{root}/../log/#{environment}.log", 'a') # => https://code-maven.com/how-to-write-to-file-in-ruby
-      set :logger, logger
-    end
-
-    # => Required for CSRF
-    # => https://cheeyeo.uk/ruby/sinatra/padrino/2016/05/14/padrino-sinatra-rack-authentication-token/
-    set :protect_from_csrf, true
-
-    # => Locales
-    # => This had to be included to ensure we can use the various locales required by Auth + others
-    load_locales File.join(root, "..", "config", "locales") # => requires Sinatra::I18nSupport
 
   ##########################################################
   ##########################################################
@@ -159,80 +115,21 @@ class App < Sinatra::Base
     # => Needs to be below definitions
     register Sinatra::AssetPipeline
 
-  ##########################################################
-  ##########################################################
+    ##########################################################
+    ##########################################################
 
-    # => Sprockets
-    # => This is for the layout (calling sprockets helpers etc)
-    # => https://github.com/petebrowne/sprockets-helpers#setup
-    configure do
-
-      # => RailsAssets
-      # => Required to get Rails Assets gems working with Sprockets/Sinatra
-      # => https://github.com/rails-assets/rails-assets-sinatra#applicationrb
-      RailsAssets.load_paths.each { |path| settings.sprockets.append_path(path) } if defined?(RailsAssets)
-
-      # => Gems
-      # => Any gems in the "assets" group need to be loaded
-      Bundler.load.current_dependencies.select{|dep| dep.groups.include?(:assets) }.map(&:name).each do |gem| # => https://stackoverflow.com/a/35183285/1143732
-        %w[stylesheets javascripts].each do |item|
-          sprockets.append_path File.join(Bundler.rubygems.find_name(gem).first.full_gem_path, 'vendor', 'assets', item)
-          sprockets.append_path File.join(Bundler.rubygems.find_name(gem).first.full_gem_path, 'app', 'assets', item)
-        end
-      end
-
-      # => Paths
-      # => Used to add assets to asset pipeline
-      %w(stylesheets javascripts images).each do |folder|
-        sprockets.append_path File.join(root, 'assets', folder)
-        sprockets.append_path File.join(root, '..', 'vendor', 'assets', folder)
-      end #paths
-
-      # => Pony
-      # => SMTP used to send email to account owner
-      # => https://github.com/benprew/pony#default-options
-      Pony.options = {
-        via: :smtp,
-        via_options: {
-          address:  'smtp.sendgrid.net',
-          port:     '587',
-          domain:    DOMAIN,
-          user_name: 'apikey',
-          password:  ENV.fetch('SENDGRID'),
-          authentication: :plain,
-          enable_starttls_auto: true
-        }
-      } #pony
-
-    end #configure
-
-  ##########################################################
-  ##########################################################
-
-    ## CORS ##
-    ## Only allow requests from domain ##
-    set :allow_origin,   URI::HTTPS.build(host: DOMAIN).to_s
-    set :allow_methods,  "GET,POST,PUT,DELETE"
-    set :allow_headers,  "accept,content-type,if-modified-since"
-    set :expose_headers, "location,link"
-
-  ##############################################################
-  ##############################################################
-
-    ## APP ##
-    ## Allows us to set specifics for ENTIRE app
-    before do
-
-      # => Options
-      # => Used to provide base functionality for the likes of app title etc
-      @options = OpenStruct.new title: Option.find_by(user_id: 0, ref: "app_title").try(:val)
-
-      # => Authentication
-      # => Allows you to load the page if required
-      # => https://stackoverflow.com/a/7709087/1143732
-      env['warden'].authenticate! unless %w[login logout register].include?(request.path_info.split('/')[1]) || !request.path_info.split('/')[1].nil? # => required to ensure protection // https://stackoverflow.com/a/7709087/1143732
-
+    # => Auth
+    # => http://recipes.sinatrarb.com/p/middleware/rack_auth_basic_and_digest?#label-HTTP+Basic+Authentication
+    use Rack::Auth::Basic, "Protected Area" do |username, password|
+      username == AUTH[:user] && password == AUTH[:pass]
     end
+
+    ##########################################################
+    ##########################################################
+
+    # => ActiveRecord
+    # => Because AR does't have the right table prefix, need to set here
+    ActiveRecord::Base.table_name_prefix = "zp_"
 
   ##############################################################
   ##############################################################
@@ -250,63 +147,13 @@ class App < Sinatra::Base
   ##############################################################
 
   # => Dash
-  # => Shows Nodes/Databases the user has created
-  # => Required authentication
+  # => Shows albums & gives options
   get '/' do
 
-    # => Objects
-    # => @pages = the pages of current_user
-    @nodes = current_user.nodes
+    @album = Album.first
 
-    # => Action
-    # => Show the "index" page (app/views/index.haml)
-    haml :index
 
   end ## get
-
-  ############################################################
-  ############################################################
-  ##                _   __          __                      ##
-  ##               / | / /___  ____/ /__  _____             ##
-  ##              /  |/ / __ \/ __  / _ \/ ___/             ##
-  ##             / /|  / /_/ / /_/ /  __(__  )              ##
-  ##            /_/ |_/\____/\__,_/\___/____/               ##
-  ##                                                        ##
-  ############################################################
-  ############################################################
-  ## Central data object in system (allows us to store data payload + appended data)
-  ## Allows us to move pages around with content etc @node.contents
-  ############################################################
-  ############################################################
-
-  # => Namespace
-  # => Gives us the means to create & manage nodes as required
-  namespace "/nodes" do
-
-    ################################
-    ################################
-
-    # => New
-    # => Provide functionality for building a new node (IE able to add properties etc)
-    # => This is somewhat experimental, but still pretty damn cool
-    get '/new' do
-      @node = current_user.nodes.new # => allows us to create new nodes
-      haml "nodes/new"
-    end ## get
-
-    ################################
-    ################################
-
-    # => Create
-    # => Build the new node + properties required to make it work
-    post 'create' do
-      @node = current_user.nodes.create node_params
-    end
-
-    ################################
-    ################################
-
-  end ## namespace
 
   ##############################################################
   ##############################################################
