@@ -36,6 +36,14 @@ Bundler.require :default, ENVIRONMENT if defined?(Bundler) # => ENVIRONMENT only
 ##########################################################
 ##########################################################
 
+# => ActiveRecord
+# => Because AR does't have the right table prefix, need to set here
+# => [needed before model declaration]
+ActiveRecord::Base.table_name_prefix = "zp_"
+
+##########################################################
+##########################################################
+
 # => Models
 # => This allows us to load all the models (which are not loaded by default)
 require_all 'app'
@@ -92,6 +100,13 @@ class App < Sinatra::Base
   ##########################################################
   ##########################################################
 
+    # => Required for CSRF
+    # => https://cheeyeo.uk/ruby/sinatra/padrino/2016/05/14/padrino-sinatra-rack-authentication-token/
+    set :protect_from_csrf, true
+
+  ##########################################################
+  ##########################################################
+
     # => General
     # => Allows us to determine various specifications inside the app
     set :haml, { layout: :'layouts/application' } # https://stackoverflow.com/a/18303130/1143732
@@ -124,13 +139,6 @@ class App < Sinatra::Base
       username == AUTH[:user] && password == AUTH[:pass]
     end
 
-    ##########################################################
-    ##########################################################
-
-    # => ActiveRecord
-    # => Because AR does't have the right table prefix, need to set here
-    ActiveRecord::Base.table_name_prefix = "zp_"
-
   ##############################################################
   ##############################################################
   ##     ____             __    __                         __ ##
@@ -152,6 +160,9 @@ class App < Sinatra::Base
 
     # => Albums
     @albums = Album.all
+
+    # => Response
+    haml :index
 
   end ## get
 

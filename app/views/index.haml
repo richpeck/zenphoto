@@ -1,2 +1,6 @@
 - # Show Photos etc
-= @albums.count 
+%h2 Albums (#{@albums.count})
+= form_tag "/" do
+  - @albums.order(id: :asc).each do |album|
+    = label_tag album.id, style: "display:block;" do
+      = album.title

@@ -3,16 +3,11 @@
   %head
 
     - # General
-    %title= @options.title || "Notion Test App"
+    %title= "ZenPhoto Export"
     %meta{content: "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}
 
     - # Assets
     != stylesheet_tag('app')
     != javascript_tag('app')
 
-  %body
-    %header
-      = haml :'partials/auth', layout: false
-    %main
-      = haml :'partials/flash', layout: false if flash.keys.any? # => required because it would just show {}
-      = yield
+  %body= yield

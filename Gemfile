@@ -60,6 +60,7 @@ end
 gem 'htmlcompressor', '~> 0.4.0'            # => HTMLCompressor (used to make the HTML have no spaces etc) // https://github.com/paolochiodi/htmlcompressor
 gem 'builder', '~> 3.2', '>= 3.2.4'         # => XML builder
 gem 'activerecord',  '~> 6.0', '>= 6.0.3.2' # => Allows us to use AR 6.0.0.rc1+ as opposed to 5.2.x (will need to keep up to date)
+gem 'acts_as_tree', '~> 2.9', '>= 2.9.1'    # => ActsAsTree
 
 # => Asset Management
 gem 'uglifier', '~> 4.2'         # => Uglifier - Javascript minification (required to get minification working)
