@@ -274,7 +274,7 @@ class App < Sinatra::Base
             i.tag!("wp:post_date_gmt", date.iso8601)
             i.cdata_value!("wp:status", "publish")
             i.tag!("wp:post_type", "post")
-            i.cdata_value!("category", "Photos", "domain" => "category", "nicename" => "photos")
+            i.cdata_value!("category", "Photos") #, "domain" => "category", "nicename" => "photos")
 
           end #item
 
