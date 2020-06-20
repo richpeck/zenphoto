@@ -139,7 +139,7 @@ class App < Sinatra::Base
       configure do
 
         # => Paths
-        # => Used to add assets to asset pipeline
+        # => Used to add assets to asset pipeline (rquired to ensure sprockets has the paths to serve the assets)
         %w(stylesheets javascripts images).each do |folder|
           sprockets.append_path File.join(root, 'assets', folder)
           sprockets.append_path File.join(root, '..', 'vendor', 'assets', folder)
@@ -176,7 +176,7 @@ class App < Sinatra::Base
   get '/' do
 
     # => Albums
-    @albums = Album.all
+    @albums = Album.all.includes(:photos)
 
     # => Response
     haml :index
@@ -192,13 +192,18 @@ class App < Sinatra::Base
 
     # => Required Params
     # => http://sinatrarb.com/contrib/required_params
-    required_params :album
+    required_params :albums
 
     # => Album
     @album = Album.find params[:albums].last
 
+    # => XML
+    @xml = Builder::XmlMarkup.new
+
     # => Response
-    send_data @xml.to_xml, filename: "#{album.title}.xml", disposition: 'attachment'
+    content_type 'application/octet-stream'
+    attachment("album-#{@album.id}.xml")
+    @xml
 
   end ## post
 

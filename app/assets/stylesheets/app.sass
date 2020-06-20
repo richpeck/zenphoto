@@ -33,6 +33,9 @@ html,
 body
   height: 100%
   width: 100%
+  margin: 0
+  box:
+    sizing: border-box
 
 // General
 // Allows us to create rudamentary styling for the system
@@ -44,6 +47,8 @@ body
   background:
     color: rgba($main_bg,1)
     image: linear-gradient(0deg, rgba(#0B071D,45) 0%, rgba(#0B071D,0) 48%)
+    repeat: no-repeat
+    attachment: fixed
   a
     display: inline-block
     color: #fff
@@ -52,78 +57,11 @@ body
       text:
         decoration: none
 
-  ////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////
+  // Labels
+  label
+    &:hover
+      cursor: pointer
 
-  // Modal
-  // Styling for confirmation modal etc
-  .modal
-    color: black
-    .modal-body
-      display: none
-
-  ////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////
-
-  // Flash
-  // This allows us to stylize the flash messages which appear
-  flash
-    display: block
-    position: fixed
-    top: 0
-    left: 0
-    right: 0
-    margin: 0 auto
-    width: 100%
-    z:
-      index: 1000
-    > div
-      display: block
-      padding: 7px 5px
-      margin: 5px 10px
-      color: rgba(255,255,255,1)
-      animation: fadein 0.2s
-      transition: opacity 0.15s ease-in, background-color 0.15s ease-in-out
-      border: 2px solid rgba(0,0,0,1)
-      margin:
-        bottom: 1px
-      font:
-        size: 11px
-        weight: bold
-      text:
-        shadow: 1px 1px 0 rgba(#000000,1)
-      background:
-        color:  rgba(255,255,255,1)
-        image:  linear-gradient(0deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%)
-      box:
-        sizing: border-box
-        shadow: 0px 0 5px -4px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.15)
-      border:
-        radius: 5px
-      z:
-        index:  1000
-      &:hover
-        cursor: pointer
-      &:before
-        position: relative
-        top: -1px
-        margin:
-          right: 2px
-      &.notice
-        $color: rgba(31,222,34,1)
-        background:
-          color: $color
-        &:before
-          content: "✔️"
-      &.error
-        $color: rgba(255,0,0,1)
-        background:
-          color: $color
-        &:before
-          content: "⚠️"
-
-  //////////////////////////////////////
-  //////////////////////////////////////
 
   // Inputs
   // General

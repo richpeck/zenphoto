@@ -5,6 +5,7 @@ class Album < ActiveRecord::Base
 
   # => Acts As Tree
   include ActsAsTree
+  extend ActsAsTree::TreeView
   acts_as_tree order: :title, foreign_key: :parentid
-  
+
 end
