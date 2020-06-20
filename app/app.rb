@@ -67,7 +67,7 @@ class App < Sinatra::Base
   ##########################################################
   ## The config allows you to define how the system is able to run
   ##########################################################
-  ########################################################## 
+  ##########################################################
 
     # => Helpers
     # => Allows us to manage the system at its core
@@ -176,6 +176,15 @@ class App < Sinatra::Base
       redirect "/", error: "Params Required"
     end
 
+    ##########################################################
+    ##########################################################
+
+    # => Helpers
+    # => Simple helpers
+    def cdata text
+      return "\<!CDATA[#{text}]]\>"
+    end
+
   ##############################################################
   ##############################################################
   ##     ____             __    __                         __ ##
@@ -233,7 +242,7 @@ class App < Sinatra::Base
     # => XML
     # => Invoke XML file
     @xml = Builder::XmlMarkup.new indent: 2
-    @xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+    @xml.instruct!
 
     # => Channel
     # => Outputs channel object (which embeds eveything else)
@@ -242,12 +251,30 @@ class App < Sinatra::Base
       # => RSS
       rss.channel do |channel|
 
+          # => Channel
+          channel.tag!("wp:wxr_version", "1.2")
+
           # => Album
           # => Builds the album item
           channel.item do |i|
-            i.title   @album.title.strip || @album.filename
-            i.link    [WORDPRESS_ROOT_URL, @album.id].join("/?p=")
-            i.pubDate @album.date || Date.today
+            date = @album.date || Date.today
+
+            i.title       @album.title.strip || @album.filename
+            i.link        [WORDPRESS_ROOT_URL, @album.id].join("/?p=")
+            i.pubDate     date
+            i.description @album.desc if @album.desc
+
+            i.cdata_value!("dc:creator", "admin")
+            i.guid [WORDPRESS_ROOT_URL, @album.id].join("/?p="), "isPermaLink" => "false"
+
+            i.cdata_value!("content:encoded", [@album.desc, "[gallery]"].join("\n\n"))
+
+            i.tag!("wp:post_id", @album.id.to_s)
+            i.tag!("wp:post_date", date.iso8601)
+            i.tag!("wp:post_date_gmt", date.iso8601)
+            i.cdata_value!("wp:status", "publish")
+            i.tag!("wp:post_type", "post")
+            i.cdata_value!("category", "Photos", "domain" => "category", "nicename" => "photos")
 
           end #item
 
