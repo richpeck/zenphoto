@@ -65,15 +65,21 @@ class App < Sinatra::Base
   ##                                  /____/              ##
   ##########################################################
   ##########################################################
+  ## The config allows you to define how the system is able to run
+  ##########################################################
+  ########################################################## 
 
     # => Helpers
     # => Allows us to manage the system at its core
     helpers Sinatra::RequiredParams # => Required Parameters (ensures we have certain params for different routes)
+    helpers Sinatra::RedirectWithFlash  # => Used to provide "flash" functionality with redirect helper
 
     # => Rack (Flash/Sessions etc)
     # => Allows us to use the "flash" object (rack-flash3)
     # => Required to get redirect_with_flash working
     use Rack::Deflater # => Compresses responses generated at server level
+    use Rack::Session::Cookie, secret: SECRET # => could use enable :sessions instead (http://sinatrarb.com/faq.html#sessions)
+    use Rack::Flash, accessorize: [:notice, :error], sweep: true
 
     # => HTMLCompressor
     # => Used to minify HTML output (removes bloat and other nonsense)
@@ -138,6 +144,11 @@ class App < Sinatra::Base
       # => https://github.com/petebrowne/sprockets-helpers#setup
       configure do
 
+        # => RailsAssets
+        # => Required to get Rails Assets gems working with Sprockets/Sinatra
+        # => https://github.com/rails-assets/rails-assets-sinatra#applicationrb
+        RailsAssets.load_paths.each { |path| settings.sprockets.append_path(path) } if defined?(RailsAssets)
+
         # => Paths
         # => Used to add assets to asset pipeline (rquired to ensure sprockets has the paths to serve the assets)
         %w(stylesheets javascripts images).each do |folder|
@@ -154,6 +165,15 @@ class App < Sinatra::Base
     # => http://recipes.sinatrarb.com/p/middleware/rack_auth_basic_and_digest?#label-HTTP+Basic+Authentication
     use Rack::Auth::Basic, "Protected Area" do |username, password|
       username == AUTH[:user] && password == AUTH[:pass]
+    end
+
+    ##########################################################
+    ##########################################################
+
+    # => Errors
+    # => https://stackoverflow.com/a/25299608/1143732
+    error 400 do
+      redirect "/", error: "Params Required"
     end
 
   ##############################################################
@@ -176,13 +196,25 @@ class App < Sinatra::Base
   get '/' do
 
     # => Albums
-    @albums = Album.all.includes(:photos)
+    @albums = Album.all.includes(:children, :photos)
 
     # => Response
     haml :index
 
   end ## get
 
+  ##############################################################
+  ##############################################################
+  ##                     _  __ __  _____                      ##
+  ##                    | |/ //  |/  / /                      ##
+  ##                    |   // /|_/ / /                       ##
+  ##                   /   |/ /  / / /___                     ##
+  ##                  /_/|_/_/  /_/_____/                     ##
+  ##                                                          ##
+  ##############################################################
+  ##############################################################
+  ## This is where the XML file is generated
+  ## It's used to provide users with the a means to get their album exported
   ##############################################################
   ##############################################################
 
@@ -195,15 +227,38 @@ class App < Sinatra::Base
     required_params :albums
 
     # => Album
-    @album = Album.find params[:albums].last
+    # => Get the album to add to the XML file
+    @album = Album.find(params[:albums].last)
 
     # => XML
-    @xml = Builder::XmlMarkup.new
+    # => Invoke XML file
+    @xml = Builder::XmlMarkup.new indent: 2
+    @xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
+
+    # => Channel
+    # => Outputs channel object (which embeds eveything else)
+    output = @xml.rss("version" => "2.0", "xmlns:excerpt" => NS_EXCERPT, "xmlns:content" => NS_CONTENT, "xmlns:wfw" => NS_WFW, "xmlns:dc" => NS_DC, "xmlns:wp" => NS_WP) do |rss|
+
+      # => RSS
+      rss.channel do |channel|
+
+          # => Album
+          # => Builds the album item
+          channel.item do |i|
+            i.title   @album.title.strip || @album.filename
+            i.link    [WORDPRESS_ROOT_URL, @album.id].join("/?p=")
+            i.pubDate @album.date || Date.today
+
+          end #item
+
+      end #channel
+    end #rss
 
     # => Response
+    # => Sends raw file back
     content_type 'application/octet-stream'
     attachment("album-#{@album.id}.xml")
-    @xml
+    output
 
   end ## post
 

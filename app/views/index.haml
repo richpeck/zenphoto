@@ -1,8 +1,17 @@
 - # Show Photos etc
 %h2 Albums (#{@albums.count})
 = form_tag "/" do
-  - @albums.each do |album|
-    = label_tag album.id, style: "display:block;" do
-      = check_box_tag :albums, value: album.id, id: album.id
-      = album.title
-  = submit_tag
+  .albums
+    - @albums.where(parentid: nil).each do |album|
+      = check_box_tag "albums[]", value: album.id, id: album.id
+      = label_tag album.id, style: "display:block;" do
+        .album
+          .info
+            = "#{album.title} (#{album.photos.count} Photos)"
+            != album.desc if album.desc.present?
+          = image_tag [ZENPHOTO_ALBUM_ROOT_URL, album.folder, album.photos.first.filename].join("/"), width: "250px" if album.photos.any?
+        .children
+          - if album.children.any?
+            - album.children.each do |child|
+              = child.title
+  = submit_tag "Generate XML"

@@ -29,6 +29,7 @@ gem 'sinatra', '~> 2.0', '>= 2.0.8.1',                                          
 gem 'sinatra-activerecord', '~> 2.0', '>= 2.0.18',                                 require: 'sinatra/activerecord'   # => Integrates ActiveRecord into Sinatra apps (I changed for AR6+)
 gem 'sinatra-asset-pipeline', '~> 2.2', github: 'richpeck/sinatra-asset-pipeline', require: 'sinatra/asset_pipeline' # => Asset Pipeline (for CSS/JS) (I changed lib/asset-pipeline/task.rb#14 to use ::Sinatra:Manifest)
 gem 'sinatra-contrib', '~> 2.0', '>= 2.0.8.1',                                     require: 'sinatra/contrib'        # => Allows us to add "contrib" library to Sinatra app (respond_with) -> http://sinatrarb.com/contrib/
+gem 'sinatra-redirect-with-flash', '~> 0.2.1',                                     require: 'sinatra/redirect_with_flash'         # => Redirect with Flash (allows use of redirect) -> https://github.com/vast/sinatra-redirect-with-flash
 
 # => Database
 # => Allows us to determine exactly which db we're using
@@ -61,7 +62,7 @@ end
 gem 'htmlcompressor', '~> 0.4.0'            # => HTMLCompressor (used to make the HTML have no spaces etc) // https://github.com/paolochiodi/htmlcompressor
 gem 'builder', '~> 3.2', '>= 3.2.4'         # => XML builder
 gem 'activerecord',  '~> 6.0', '>= 6.0.3.2' # => Allows us to use AR 6.0.0.rc1+ as opposed to 5.2.x (will need to keep up to date)
-gem 'acts_as_tree', '~> 2.9', '>= 2.9.1'    # => ActsAsTree
+gem 'rack-flash3', require: 'rack-flash'    # => Flash messages for Rack apps (required for "redirect_with_flash" -- #L44)
 
 # => Asset Management
 gem 'uglifier', '~> 4.2'         # => Uglifier - Javascript minification (required to get minification working)
@@ -83,6 +84,14 @@ gem 'padrino-helpers', '~> 0.15.0'            # => Sinatra framework which adds 
 gem 'haml', '~> 5.1', '>= 5.1.2'      # => HAML
 gem 'titleize', '~> 1.4', '>= 1.4.1'  # => Titleize (for order line items)
 gem 'humanize', '~> 2.4', '>= 2.4.2'  # => Humanize (allows us to translate numbers to words)
+
+# => Assets
+# => RailsAssets
+# => This is not reliable, and may require refactoring (12/02/2020)
+# => It also needs to embody the gem inside the source block (new update)
+source 'https://rails-assets.org' do
+  gem 'rails-assets-jquery' # => JQuery (https://github.com/jquery/jquery)
+end
 
 ###########################################
 ###########################################

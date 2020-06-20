@@ -13,6 +13,7 @@
 ## ENV ##
 ## Allows us to define before the App directory ##
 ENVIRONMENT = ENV.fetch('RACK_ENV', 'development')
+SECRET      = 'fg2KetUk57RwCuQhUs7MG92qkqa2AUJncTa5r2VeV7gm8XGMk53gnSQtZqSW'
 
 ## DB ##
 MYSQL_HOST         = ENV.fetch('MYSQL_HOST', '')
@@ -31,7 +32,7 @@ AUTH = {
 
 ## Paths ##
 ZENPHOTO_ALBUM_ROOT_URL = 'https://davenporthorses.org/photos/albums'
-WORDPRESS_ROOT_URL      = 'https://davenporthorses.org'
+WORDPRESS_ROOT_URL      = 'https://davenporthorses.org/TEMP_WORDPRESS'
 
 ##########################################
 ##########################################

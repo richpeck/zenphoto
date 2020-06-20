@@ -10,4 +10,9 @@
     = stylesheet_tag('app')
     = javascript_tag('app')
 
-  %body= yield
+  %body
+    - if flash.keys.any?
+      %flash
+        - flash.keys.each do |k|
+          = content_tag :div, flash[k], class: k
+    = yield
