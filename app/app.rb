@@ -115,7 +115,6 @@ class App < Sinatra::Base
 
     # => General
     # => Allows us to determine various specifications inside the app
-    set :views, Proc.new { File.join(root, "views") } # required to get views working (defaulted to ./views)
     set :public_folder, File.join(root, "..", "public") # Root dir fucks up (public_folder defaults to root) http://sinatrarb.com/configuration.html#root---the-applications-root-directory
 
   ##########################################################
@@ -135,8 +134,8 @@ class App < Sinatra::Base
     register Padrino::Helpers # => number_to_currency, form helpers etc (https://github.com/padrino/padrino-framework/blob/master/padrino-helpers/lib/padrino-helpers.rb#L22)
     register Sinatra::AssetPipeline
 
-    ##########################################################
-    ##########################################################
+  ##########################################################
+  ##########################################################
 
     # => Sprockets
     # => This is for the layout (calling sprockets helpers etc)
@@ -152,8 +151,8 @@ class App < Sinatra::Base
 
     end #configure
 
-    ##########################################################
-    ##########################################################
+  ##########################################################
+  ##########################################################
 
     # => Auth
     # => http://recipes.sinatrarb.com/p/middleware/rack_auth_basic_and_digest?#label-HTTP+Basic+Authentication
@@ -166,7 +165,7 @@ class App < Sinatra::Base
 
     # => Errors
     # => https://stackoverflow.com/a/25299608/1143732
-    error 400 do
+    error do
       redirect "/", error: "Params Required"
     end
 
@@ -193,7 +192,7 @@ class App < Sinatra::Base
     @albums = Album.all.where.not(title: "All Davenports").includes(:children, :photos)
 
     # => Response
-    haml :index, layout: 'layout'
+    haml :index, layout: :'layout'
 
   end ## get
 
