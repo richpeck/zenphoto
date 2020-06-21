@@ -279,6 +279,12 @@ class App < Sinatra::Base
             # => Featured
             # => https://wordpress.stackexchange.com/a/140501
             # => This needs the first thumbnail from the above (photos) and outputs it here
+            if @album.photos.any?
+              i.tag! "wp:postmeta" do |m|
+                m.tag!("wp:meta_key", "_thumbnail_id")
+                m.cdata_value!("wp:meta_value", @album.photos.first.id.to_s)
+              end
+            end
 
           end #item
 
