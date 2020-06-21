@@ -4,14 +4,14 @@
   .albums
     - @albums.where(parentid: nil).each do |album|
       = check_box_tag "albums[]", value: album.id, id: album.id
-      = label_tag album.id, style: "display:block;" do
-        .album
+      %label{ for: album.id }
+        .album{ style: "background-image: url(#{[ZENPHOTO_ALBUM_ROOT_URL, album.folder, album.photos.first.filename].join("/") if album.photos.any?})" }
           .info
             = "#{album.title} (#{album.photos.count} Photos)"
-            != album.desc if album.desc.present?
-          = image_tag [ZENPHOTO_ALBUM_ROOT_URL, album.folder, album.photos.first.filename].join("/"), width: "250px" if album.photos.any?
+            != album.desc.truncate(20) if album.desc.present?
         .children
           - if album.children.any?
-            - album.children.each do |child|
-              = child.title
+            %ul
+              - album.children.each do |child|
+                %li= child.title
   = submit_tag "Generate XML"
