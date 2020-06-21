@@ -137,6 +137,15 @@ class App < Sinatra::Base
   ##########################################################
   ##########################################################
 
+    # => Development
+    # => Ensures we're only loading in development environment
+    configure :development do
+      register Sinatra::Reloader  # => http://sinatrarb.com/contrib/reloader
+    end
+
+  ##########################################################
+  ##########################################################
+
     # => Sprockets
     # => This is for the layout (calling sprockets helpers etc)
     # => https://github.com/petebrowne/sprockets-helpers#setup
@@ -192,7 +201,7 @@ class App < Sinatra::Base
     @albums = Album.all.where.not(title: "All Davenports").includes(:children, :photos)
 
     # => Response
-    haml :index, layout: :'layout'
+    haml :index#, layout: :'layout'
 
   end ## get
 
