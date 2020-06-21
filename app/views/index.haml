@@ -3,7 +3,7 @@
 = form_tag "/" do
   .albums
     - @albums.where(parentid: nil).each do |album|
-      = check_box_tag "albums[]", value: album.id, id: album.id
+      = radio_button_tag "albums[]", value: album.id, id: album.id
       %label{ for: album.id }
         .album{ style: "background-image: url(#{[ZENPHOTO_ALBUM_ROOT_URL, album.folder, album.photos.first.filename].join("/") if album.photos.any?})" }
           .info
@@ -13,5 +13,10 @@
           - if album.children.any?
             %ul
               - album.children.each do |child|
-                %li= child.title
+                %li= [child.title, "(#{child.children.count} Albums)"].join(" ")
+                - if child.children.any?
+                  %ul
+                    - child.children.each do |x|
+                      %li= x.title
+
   = submit_tag "Generate XML"
