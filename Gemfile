@@ -85,13 +85,5 @@ gem 'haml', '~> 5.1', '>= 5.1.2'      # => HAML
 gem 'titleize', '~> 1.4', '>= 1.4.1'  # => Titleize (for order line items)
 gem 'humanize', '~> 2.4', '>= 2.4.2'  # => Humanize (allows us to translate numbers to words)
 
-# => Assets
-# => RailsAssets
-# => This is not reliable, and may require refactoring (12/02/2020)
-# => It also needs to embody the gem inside the source block (new update)
-source 'https://rails-assets.org' do
-  gem 'rails-assets-jquery' # => JQuery (https://github.com/jquery/jquery)
-end
-
 ###########################################
 ###########################################

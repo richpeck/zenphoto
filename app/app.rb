@@ -115,7 +115,6 @@ class App < Sinatra::Base
 
     # => General
     # => Allows us to determine various specifications inside the app
-    set :haml, { layout: :'layouts/application' } # https://stackoverflow.com/a/18303130/1143732
     set :views, Proc.new { File.join(root, "views") } # required to get views working (defaulted to ./views)
     set :public_folder, File.join(root, "..", "public") # Root dir fucks up (public_folder defaults to root) http://sinatrarb.com/configuration.html#root---the-applications-root-directory
 
@@ -143,11 +142,6 @@ class App < Sinatra::Base
     # => This is for the layout (calling sprockets helpers etc)
     # => https://github.com/petebrowne/sprockets-helpers#setup
     configure do
-
-      # => RailsAssets
-      # => Required to get Rails Assets gems working with Sprockets/Sinatra
-      # => https://github.com/rails-assets/rails-assets-sinatra#applicationrb
-      RailsAssets.load_paths.each { |path| settings.sprockets.append_path(path) } if defined?(RailsAssets)
 
       # => Paths
       # => Used to add assets to asset pipeline (rquired to ensure sprockets has the paths to serve the assets)
@@ -199,7 +193,7 @@ class App < Sinatra::Base
     @albums = Album.all.where.not(title: "All Davenports").includes(:children, :photos)
 
     # => Response
-    haml :index
+    haml :index, layout: 'layout'
 
   end ## get
 
