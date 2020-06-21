@@ -201,7 +201,8 @@ class App < Sinatra::Base
     @albums = Album.all.where.not(title: "All Davenports").includes(:children, :photos)
 
     # => Response
-    haml :index#, layout: :'layout'
+    # => Layout is determined by Padrino helpers
+    haml :index
 
   end ## get
 
@@ -233,16 +234,15 @@ class App < Sinatra::Base
     # => This should be a single "parent" album
     @album = Album.find(params[:albums].first)
 
-    # => Builder
-    # => This will build each album + its children
-    # => http://recipes.sinatrarb.com/p/views/rss_feed_with_builder?
-    @output = builder :'albums/show'
-
     # => Response
     # => Sends raw file back
     content_type 'application/octet-stream'
     attachment("album-#{@album.id}.xml")
-    @output
+
+    # => Builder
+    # => This will build each album + its children
+    # => http://recipes.sinatrarb.com/p/views/rss_feed_with_builder?
+    builder :albums
 
   end ## post
 

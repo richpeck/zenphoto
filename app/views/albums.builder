@@ -3,7 +3,7 @@ xml.instruct!
 
 # => Channel
 # => Outputs channel object (which embeds eveything else)
-xml.rss("version" => "2.0", "xmlns:excerpt" => NS_EXCERPT, "xmlns:content" => NS_CONTENT, "xmlns:wfw" => NS_WFW, "xmlns:dc" => NS_DC, "xmlns:wp" => NS_WP) do |rss|
+xml.rss "version" => "2.0", "xmlns:excerpt" => NS_EXCERPT, "xmlns:content" => NS_CONTENT, "xmlns:wfw" => NS_WFW, "xmlns:dc" => NS_DC, "xmlns:wp" => NS_WP do |rss|
 
   # => RSS
   rss.channel do |channel|
@@ -14,11 +14,10 @@ xml.rss("version" => "2.0", "xmlns:excerpt" => NS_EXCERPT, "xmlns:content" => NS
       # => Album
       # => This outputs the XML required for each album + its accompanying children
       # => https://stackoverflow.com/a/6222049/1143732
-      builder :"albums/album", locals: { channel: channel }, layout: false
+      builder :"albums/album", locals: { channel: channel, album: @album }, layout: false
 
-      # => Photos
-      # => Export photos
-      @album.photos.each { |photo| builder :"albums/photos", locals: { channel: channel, photo: photo }, layout: false } if @album.photos.any?
+      # => Children
+      @album.children.each { |child| builder :"albums/album", locals: { channel: channel, album: child }, layout: false } if @album.children.any?
 
   end #channel
 end #rss
