@@ -6,7 +6,6 @@
       = radio_button_tag "albums[]", value: album.id, id: album.id
       %label{ for: album.id }
         .album{ style: "background-image: url(#{[ZENPHOTO_ALBUM_ROOT_URL, album.folder, album.photos.first.filename].join("/") if album.photos.any?})" }
-          .info
-            = "#{album.title} (#{album.photos.count} Photos)"
+          .info= "#{album.title}"
 
   = submit_tag "Generate XML"
