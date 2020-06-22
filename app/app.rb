@@ -198,7 +198,7 @@ class App < Sinatra::Base
   get '/' do
 
     # => Albums
-    @albums = Album.all.where.not(title: "All Davenports").includes(:children, :photos)
+    @albums = Album.all.where.not(title: "All Davenports").includes(:photos)
 
     # => Response
     # => Layout is determined by Padrino helpers

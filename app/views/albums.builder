@@ -16,8 +16,5 @@ xml.rss "version" => "2.0", "xmlns:excerpt" => NS_EXCERPT, "xmlns:content" => NS
       # => https://stackoverflow.com/a/6222049/1143732
       builder :"albums/album", locals: { channel: channel, album: @album }, layout: false
 
-      # => Children
-      @album.children.each { |child| builder :"albums/album", locals: { channel: channel, album: child }, layout: false } if @album.children.any?
-
   end #channel
 end #rss
