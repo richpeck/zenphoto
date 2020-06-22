@@ -14,7 +14,7 @@ channel.item do |i|
   i.cdata_value!("content:encoded", [album.desc, "[gallery ids=\"#{album.photo_ids.join(",")}\"]"].join("\n\n"))
 
   i.cdata_value!("wp:post_parent", album.parentid.to_s) if album.parentid
-  i.tag!("wp:post_id", album.id.to_s)
+  i.tag!("wp:post_id", (album.id + 50000).to_s)
   i.tag!("wp:post_date", date.iso8601)
   i.tag!("wp:post_date_gmt", date.iso8601)
   i.cdata_value!("wp:status", "publish")
@@ -27,7 +27,7 @@ channel.item do |i|
   if album.photos.any?
     i.tag! "wp:postmeta" do |m|
       m.tag!("wp:meta_key", "_thumbnail_id")
-      m.cdata_value!("wp:meta_value", album.photos.first.id.to_s)
+      m.cdata_value!("wp:meta_value", (album.photos.first.id + 50000).to_s)
     end
   end
 
@@ -46,11 +46,11 @@ if album.photos.any?
       t.cdata_value!("description", photo.desc) if photo.desc
       t.cdata_value!("content:encoded", photo.desc) if photo.desc
 
-      t.tag!("wp:post_id", photo.id.to_s)
+      t.tag!("wp:post_id", (photo.id + 50000).to_s)
       t.cdata_value!("wp:post_date", date.iso8601)
       t.cdata_value!("post_date_gmt", date.iso8601)
       t.cdata_value!("wp:status", "inherit")
-      t.cdata_value!("wp:post_parent", album.id.to_s)
+      t.cdata_value!("wp:post_parent", (album.id + 50000).to_s)
       t.cdata_value!("wp:menu_order", photo.sort_order.to_s || '')
       t.cdata_value!("wp:post_type", "attachment")
       t.tag!("wp:attachment_url", [ZENPHOTO_ALBUM_ROOT_URL, album.folder, photo.filename].join("/"))
