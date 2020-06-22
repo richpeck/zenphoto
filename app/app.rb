@@ -227,12 +227,12 @@ class App < Sinatra::Base
 
     # => Required Params
     # => http://sinatrarb.com/contrib/required_params
-    required_params :albums
+    required_params :album
 
     # => Album
     # => Get the album to add to the XML file
     # => This should be a single "parent" album
-    @album = Album.find(params[:albums].first)
+    @album = Album.find(params[:album])
 
     # => Response
     # => Sends raw file back
