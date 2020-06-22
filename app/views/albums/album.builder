@@ -11,7 +11,7 @@ channel.item do |i|
   i.cdata_value!("dc:creator", "admin")
   i.guid [WORDPRESS_ROOT_URL, album.id].join("/?p="), "isPermaLink" => "false"
 
-  i.cdata_value!("content:encoded", [album.desc, "[gallery ids=\"#{album.photo_ids.join(",")}\"]"].join("\n\n"))
+  i.cdata_value!("content:encoded", [album.desc, "[gallery ids=\"#{album.photo_ids.map{ |id| id + 50000 }.join(",")}\"]"].join("\n\n"))
 
   i.cdata_value!("wp:post_parent", album.parentid.to_s) if album.parentid
   i.tag!("wp:post_id", (album.id + 50000).to_s)
