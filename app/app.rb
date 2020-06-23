@@ -174,9 +174,9 @@ class App < Sinatra::Base
 
     # => Errors
     # => https://stackoverflow.com/a/25299608/1143732
-    error do
-      redirect "/", error: "Params Required"
-    end
+    #error do
+    #  redirect "/", error: "Params Required"
+    #end
 
   ##############################################################
   ##############################################################
