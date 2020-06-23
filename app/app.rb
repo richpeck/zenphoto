@@ -227,7 +227,7 @@ class App < Sinatra::Base
 
     # => Required Params
     # => http://sinatrarb.com/contrib/required_params
-    required_params :album
+    #required_params :album
 
     # => Album
     # => Get the album to add to the XML file
